@@ -983,7 +983,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
+      z-index: 10001;
       transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -1439,9 +1439,306 @@
     .light-theme .hotboard-card {
       background-color: transparent;
     }
-
     
-
+    /* 底部收藏夹样式 */
+    .favorites-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .favorites-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background-color: rgba(54, 56, 66, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      border: 1px solid var(--md-sys-color-outline);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      min-width: 80px;
+      justify-content: center;
+    }
+    
+    .light-theme .favorites-content {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .favorite-item-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .favorite-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: var(--md-sys-color-surface-variant);
+      color: var(--md-sys-color-on-surface-variant);
+      text-decoration: none;
+      font-size: 24px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      border: 2px solid transparent;
+      overflow: hidden;
+    }
+    
+    /* 限制收藏夹中图片的大小 */
+    .favorite-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    
+    .favorite-item:hover {
+      transform: scale(1.15) translateY(-8px);
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+      border-color: var(--md-sys-color-primary);
+    }
+    
+    /* 删除按钮样式 */
+    .favorite-delete-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: var(--md-sys-color-error);
+      color: var(--md-sys-color-on-error);
+      border: 2px solid var(--md-sys-color-surface);
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 10002;
+    }
+    
+    .favorite-item-wrapper:hover .favorite-delete-btn {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .favorite-delete-btn:hover {
+      background-color: var(--md-sys-color-error-container);
+      color: var(--md-sys-color-on-error-container);
+      transform: scale(1.1);
+    }
+    
+    /* 移动端适配 - 禁用放大效果 */
+    @media (max-width: 768px) {
+      .favorite-item:hover {
+        transform: none;
+        box-shadow: none;
+      }
+      
+      .favorite-item-wrapper:hover .favorite-delete-btn {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+    
+    .favorite-item .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--md-sys-color-surface-variant);
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .favorite-item:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-4px);
+    }
+    
+    .favorite-add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .favorite-add-btn:hover {
+      transform: scale(1.15) translateY(-8px);
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* 添加收藏卡片样式 */
+    .favorite-add-card {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background-color: var(--md-sys-color-surface-variant);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--md-sys-color-outline);
+      min-width: 320px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .light-theme .favorite-add-card {
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+    
+    .favorite-add-card.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    
+    .favorite-add-hint {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 16px;
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border-radius: 12px;
+    }
+    
+    .favorite-add-hint p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .favorite-custom-add h3 {
+      margin: 0 0 16px 0;
+      color: var(--md-sys-color-on-surface);
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .favorite-custom-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .form-group label {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      padding: 12px 16px;
+      border-radius: 12px;
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .light-theme .form-group input {
+      background-color: var(--md-sys-color-surface-light);
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--md-sys-color-primary);
+      box-shadow: 0 0 0 2px var(--md-sys-color-primary);
+      transform: translateY(-2px);
+    }
+    
+    #customAddBtn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+    
+    #customAddBtn:hover {
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* 网页详情卡片中的收藏按钮样式 */
+    .nav-card .favorite-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--md-sys-color-on-surface-variant);
+      transition: all 0.3s ease;
+      z-index: 10;
+      padding: 8px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    
+    .nav-card .favorite-btn:hover {
+      color: var(--md-sys-color-primary);
+      transform: scale(1.1);
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .nav-card .favorite-btn.active {
+      color: #FFD700;
+    }
+    
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -1704,6 +2001,254 @@
 
   <!-- 扩散效果容器 -->
   <div class="ripple-container" id="rippleContainer"></div>
+  
+  <!-- 底部收藏夹 -->
+  <div class="favorites-bar" id="favoritesBar">
+    <div class="favorites-content" id="favoritesContent">
+      <!-- 收藏的网站将通过JavaScript动态生成 -->
+      <button class="favorite-add-btn" id="favoriteAddBtn" title="添加收藏">+</button>
+    </div>
+    
+    <!-- 添加收藏卡片 -->
+      <div class="favorite-add-card" id="favoriteAddCard">
+        <div class="favorite-add-hint">
+          <p>在网页详情卡片内点击星星即可添加至此处</p>
+        </div>
+        <div class="favorite-custom-add">
+          <h3>添加自定义网站</h3>
+          <div class="favorite-custom-form">
+            <div class="form-group">
+              <label for="customWebsiteName">网站名称</label>
+              <input type="text" id="customWebsiteName" placeholder="示例网站" required>
+            </div>
+            <div class="form-group">
+              <label for="customWebsiteUrl">网站链接</label>
+              <input type="url" id="customWebsiteUrl" placeholder="https://example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="customWebsiteIcon">网站图标 (Emoji)</label>
+              <div style="position: relative;">
+                <input type="text" id="customWebsiteIcon" placeholder="📦" required maxlength="2" readonly>
+                <button type="button" id="emojiPickerBtn" style="
+                  position: absolute;
+                  right: 8px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  background: none;
+                  border: none;
+                  font-size: 20px;
+                  cursor: pointer;
+                  padding: 4px 8px;
+                  border-radius: 8px;
+                  transition: background-color 0.2s ease;
+                ">😊</button>
+                <!-- Emoji选择器 -->
+                <div class="emoji-picker" id="emojiPicker" style="
+                  position: absolute;
+                  bottom: 100%;
+                  right: 0;
+                  background-color: var(--md-sys-color-surface-variant);
+                  border-radius: 12px;
+                  padding: 12px;
+                  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                  border: 1px solid var(--md-sys-color-outline);
+                  display: none;
+                  grid-template-columns: repeat(6, 1fr);
+                  gap: 8px;
+                  max-height: 200px;
+                  overflow-y: auto;
+                  z-index: 10002;
+                  margin-bottom: 8px;
+                ">
+                  <!-- 常用Emoji -->
+                  <button class="emoji-option" data-emoji="📦" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">📦</button>
+                  <button class="emoji-option" data-emoji="🌐" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🌐</button>
+                  <button class="emoji-option" data-emoji="📚" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">📚</button>
+                  <button class="emoji-option" data-emoji="🎨" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🎨</button>
+                  <button class="emoji-option" data-emoji="💻" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">💻</button>
+                  <button class="emoji-option" data-emoji="🎓" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🎓</button>
+                  <button class="emoji-option" data-emoji="🎮" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🎮</button>
+                  <button class="emoji-option" data-emoji="🎵" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🎵</button>
+                  <button class="emoji-option" data-emoji="📷" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">📷</button>
+                  <button class="emoji-option" data-emoji="📝" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">📝</button>
+                  <button class="emoji-option" data-emoji="🔧" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🔧</button>
+                  <button class="emoji-option" data-emoji="📊" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">📊</button>
+                  <button class="emoji-option" data-emoji="🌱" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🌱</button>
+                  <button class="emoji-option" data-emoji="💡" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">💡</button>
+                  <button class="emoji-option" data-emoji="🎯" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🎯</button>
+                  <button class="emoji-option" data-emoji="⚡" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">⚡</button>
+                  <button class="emoji-option" data-emoji="🌈" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🌈</button>
+                  <button class="emoji-option" data-emoji="🌟" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    padding: 8px;
+                    border-radius: 8px;
+                    transition: all 0.2s ease;
+                    text-align: center;
+                  ">🌟</button>
+                </div>
+              </div>
+            </div>
+            <button type="button" id="customAddBtn">添加网站</button>
+          </div>
+        </div>
+      </div>
+  </div>
   
   <!-- 左侧导航栏 -->
   <div class="side-nav-container" id="sideNavContainer" style="
@@ -2144,7 +2689,7 @@
   <footer class="footer" role="contentinfo" style="margin-top: 60px; padding: 20px; text-align: center; font-size: 14px; color: var(--md-sys-color-on-surface-variant);">
     <p>© 2025 智教导航 - R3n_011打造</p>
     <p style="margin-top: 8px;">本网站提供的所有链接均指向第三方网站，智教导航不对其内容负责。</p>
-    <p style="margin-top: 8px;">v1.2</p>
+    <p style="margin-top: 8px;">v1.3</p>
   </footer>
 
   <script>
@@ -2898,6 +3443,24 @@
             </div>
             
             <div class="dialog-footer" style="display: flex; justify-content: flex-end; gap: 12px;">
+              <button class="favorite-btn detailed-fav-btn" data-title="${title}" data-url="${siteData.url}" data-icon="${siteData.emoji || '📦'}" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 20px;
+                background-color: var(--md-sys-color-secondary-container);
+                color: var(--md-sys-color-on-secondary-container);
+                border: none;
+                border-radius: var(--md-sys-shape-corner-small);
+                font-weight: 500;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                gap: 8px;
+              ">
+                <span class="favorite-star">☆</span>
+                <span>收藏网站</span>
+              </button>
               <a href="${siteData.url}" target="_blank" class="visit-btn" style="
                 display: inline-block;
                 padding: 12px 24px;
@@ -2919,6 +3482,46 @@
       dialogContainer.id = 'cardDialogContainer';
       dialogContainer.innerHTML = dialogHTML;
       document.body.appendChild(dialogContainer);
+      
+      // 初始化收藏按钮状态
+      const favBtn = dialogContainer.querySelector('.detailed-fav-btn');
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      const isFavorited = favorites.some(item => item.url === siteData.url);
+      const starElement = favBtn.querySelector('.favorite-star');
+      
+      if (isFavorited) {
+        starElement.innerHTML = '★';
+        starElement.style.color = '#FFD700';
+        favBtn.querySelector('span:last-child').textContent = '已收藏';
+      }
+      
+      // 添加收藏按钮点击事件
+      favBtn.addEventListener('click', () => {
+        // 获取收藏管理器实例
+        const favoritesManager = window.favoritesManager;
+        if (favoritesManager) {
+          // 正确处理头像 - 如果有图片头像且没有emoji，使用图片头像
+          let icon = '📦';
+          if (siteData.avatar && !siteData.emoji) {
+            icon = `img:${siteData.avatar}`;
+          } else {
+            icon = siteData.emoji || '📦';
+          }
+          favoritesManager.toggleFavorite(title, siteData.url, icon);
+          
+          // 更新按钮状态
+          const newIsFavorited = !isFavorited;
+          if (newIsFavorited) {
+            starElement.innerHTML = '★';
+            starElement.style.color = '#FFD700';
+            favBtn.querySelector('span:last-child').textContent = '已收藏';
+          } else {
+            starElement.innerHTML = '☆';
+            starElement.style.color = '';
+            favBtn.querySelector('span:last-child').textContent = '收藏网站';
+          }
+        }
+      });
       
       // 关闭弹窗函数（带动画）
       function closeCardDialog() {
@@ -3334,6 +3937,18 @@
             b: parseInt(rgbMatch[3])
           };
         }
+      } else if (borderColor === 'transparent') {
+        // 边框是透明的，使用主题主色作为默认值
+        // 检查是否是收藏夹中的头像
+        if (imgElement.parentElement.classList.contains('favorite-item')) {
+          // 收藏夹中的头像，使用主题主色
+          const rootComputedStyle = window.getComputedStyle(document.documentElement);
+          const primaryColor = rootComputedStyle.getPropertyValue('--md-sys-color-primary');
+          if (primaryColor.startsWith('#')) {
+            // 将十六进制颜色转换为RGB
+            borderRGB = hexToRgb(primaryColor) || { r: 0, g: 0, b: 0 };
+          }
+        }
       }
       
       // 创建一个临时canvas来分析图像
@@ -3445,7 +4060,7 @@
       return { r, g, b };
     }
 
-    // 优化头像大小（优化性能版本，只在必要时执行）
+    // 优化单个头像尺寸
     function optimizeAvatarSize(img) {
       // 检查是否已优化
       if (img.dataset.optimized) return;
@@ -3453,6 +4068,7 @@
       // 标记为已优化
       img.dataset.optimized = 'true';
       
+      // 所有头像都需要处理，包括收藏夹中的头像
       // 获取边框颜色
       const computedStyle = window.getComputedStyle(img.parentElement);
       const borderColor = computedStyle.borderColor;
@@ -3524,18 +4140,26 @@
           const newWidth = Math.round(currentWidth * 0.95);
           const newHeight = Math.round(currentHeight * 0.95);
           
-          img.style.width = `${newWidth}px`;
-          img.style.height = `${newHeight}px`;
-          
-          // 重新计算margin，保持居中
-          img.style.margin = `0 auto 16px`;
+          // 对于收藏夹中的头像，只调整宽度和高度，不设置margin
+          if (img.parentElement.classList.contains('favorite-item')) {
+            // 收藏夹中的头像，直接设置宽度和高度
+            img.style.width = `${newWidth}px`;
+            img.style.height = `${newHeight}px`;
+          } else {
+            // 网页卡片中的头像，正常设置宽度、高度和margin
+            img.style.width = `${newWidth}px`;
+            img.style.height = `${newHeight}px`;
+            // 重新计算margin，保持居中
+            img.style.margin = `0 auto 16px`;
+          }
         }
       }
     }
 
     // 优化所有头像（优化性能版本）
     function optimizeAvatars() {
-      const avatarImages = document.querySelectorAll('.nav-avatar img');
+      // 同时选择网页卡片和收藏夹中的头像
+      const avatarImages = document.querySelectorAll('.nav-avatar img, .favorite-item img');
       
       // 使用requestIdleCallback在浏览器空闲时执行
       if ('requestIdleCallback' in window) {
@@ -4240,40 +4864,415 @@
     }
 
     // 创建扩散效果
-    function createRippleEffect(x, y) {
-      if (!rippleContainer) return;
+  function createRippleEffect(x, y) {
+    if (!rippleContainer) return;
+    
+    // 创建扩散元素
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    
+    // 设置扩散元素的位置
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    
+    // 计算最大扩散半径（从中心到最远角落的距离）
+    const maxRadius = Math.sqrt(
+      Math.max(x, window.innerWidth - x) ** 2 + 
+      Math.max(y, window.innerHeight - y) ** 2
+    );
+    
+    // 设置扩散元素的初始大小
+    const initialSize = Math.max(48, 48); // 使用按钮的最小尺寸
+    ripple.style.width = `${initialSize}px`;
+    ripple.style.height = `${initialSize}px`;
+    
+    // 设置扩散元素的最大尺寸
+    ripple.style.setProperty('--max-radius', `${maxRadius}px`);
+    
+    // 添加到容器
+    rippleContainer.appendChild(ripple);
+    
+    // 动画结束后移除元素
+    ripple.addEventListener('animationend', () => {
+      ripple.remove();
+    });
+  }
+  
+  // 底部收藏夹功能
+  class FavoritesManager {
+    constructor() {
+      this.favorites = this.loadFavorites();
+      this.init();
+    }
+    
+    init() {
+      this.addFavoriteButtonsToCards();
+      this.renderFavorites();
+      this.setupEventListeners();
+    }
+    
+    // 从本地存储加载收藏
+    loadFavorites() {
+      const stored = localStorage.getItem('favorites');
+      return stored ? JSON.parse(stored) : [];
+    }
+    
+    // 保存收藏到本地存储
+    saveFavorites() {
+      localStorage.setItem('favorites', JSON.stringify(this.favorites));
+    }
+    
+    // 为所有网页卡片添加收藏按钮
+    addFavoriteButtonsToCards() {
+      // 移除所有现有的收藏按钮，只在详细卡片中显示
+      const existingButtons = document.querySelectorAll('.nav-card .favorite-btn');
+      existingButtons.forEach(btn => btn.remove());
+      return;
+      // 以下代码已移除，不再向小卡片添加收藏按钮
       
-      // 创建扩散元素
-      const ripple = document.createElement('div');
-      ripple.className = 'ripple';
-      
-      // 设置扩散元素的位置
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-      
-      // 计算最大扩散半径（从中心到最远角落的距离）
-      const maxRadius = Math.sqrt(
-        Math.max(x, window.innerWidth - x) ** 2 + 
-        Math.max(y, window.innerHeight - y) ** 2
-      );
-      
-      // 设置扩散元素的初始大小
-      const initialSize = Math.max(48, 48); // 使用按钮的最小尺寸
-      ripple.style.width = `${initialSize}px`;
-      ripple.style.height = `${initialSize}px`;
-      
-      // 设置扩散元素的最大尺寸
-      ripple.style.setProperty('--max-radius', `${maxRadius}px`);
-      
-      // 添加到容器
-      rippleContainer.appendChild(ripple);
-      
-      // 动画结束后移除元素
-      ripple.addEventListener('animationend', () => {
-        ripple.remove();
+      const cards = document.querySelectorAll('.nav-card');
+      cards.forEach(card => {
+        // 检查是否已经有收藏按钮
+        if (card.querySelector('.favorite-btn')) return;
+        
+        const favBtn = document.createElement('button');
+        favBtn.className = 'favorite-btn';
+        favBtn.innerHTML = '☆';
+        favBtn.title = '添加到收藏夹';
+        
+        // 获取卡片信息
+        const title = card.querySelector('.nav-title')?.textContent || '未知网站';
+        const url = card.getAttribute('href') || card.querySelector('a')?.getAttribute('href') || '#';
+        
+        // 从websiteData中获取正确的头像信息
+        let icon = '📦';
+        websiteData.forEach(category => {
+          const site = category.sites.find(s => {
+            // 尝试匹配URL
+            try {
+              const siteUrl = new URL(s.url).hostname;
+              const cardUrl = new URL(url).hostname;
+              return siteUrl === cardUrl;
+            } catch {
+              // 如果URL解析失败，尝试匹配标题
+              return s.title === title;
+            }
+          });
+          
+          if (site) {
+            // 如果有图片头像，使用图片URL，否则使用emoji
+            if (site.avatar && !site.emoji) {
+              // 对于图片头像，我们使用一个特殊的标记，后面会处理
+              icon = `img:${site.avatar}`;
+            } else {
+              // 使用emoji
+              icon = site.emoji || '📦';
+            }
+          }
+        });
+        
+        // 检查是否已经收藏
+        const isFavorited = this.favorites.some(item => item.url === url);
+        if (isFavorited) {
+          favBtn.innerHTML = '★';
+          favBtn.classList.add('active');
+        }
+        
+        // 添加点击事件
+        favBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.toggleFavorite(title, url, icon);
+          
+          // 更新按钮状态
+          if (favBtn.classList.contains('active')) {
+            favBtn.innerHTML = '☆';
+            favBtn.classList.remove('active');
+          } else {
+            favBtn.innerHTML = '★';
+            favBtn.classList.add('active');
+          }
+        });
+        
+        card.appendChild(favBtn);
       });
     }
-  </script>
+    
+    // 切换收藏状态
+    toggleFavorite(title, url, icon) {
+      const index = this.favorites.findIndex(item => item.url === url);
+      
+      if (index > -1) {
+        // 取消收藏
+        this.favorites.splice(index, 1);
+      } else {
+        // 添加收藏
+        this.favorites.push({
+          id: Date.now(),
+          title,
+          url,
+          icon
+        });
+      }
+      
+      this.saveFavorites();
+      this.renderFavorites();
+    }
+    
+    // 渲染收藏列表
+    renderFavorites() {
+      const favoritesContent = document.getElementById('favoritesContent');
+      const addBtn = document.getElementById('favoriteAddBtn');
+      
+      // 清空现有内容，保留添加按钮
+      favoritesContent.innerHTML = '';
+      favoritesContent.appendChild(addBtn);
+      
+      // 添加收藏项
+      this.favorites.forEach(item => {
+        const favItem = document.createElement('div');
+        favItem.className = 'favorite-item-wrapper';
+        
+        // 创建收藏链接
+        const favLink = document.createElement('a');
+        favLink.className = 'favorite-item';
+        favLink.href = item.url;
+        favLink.target = '_blank';
+        favLink.title = item.title;
+        
+        // 处理图标 - 使用简洁的显示方式
+        if (item.icon.startsWith('img:')) {
+          // 图片头像 - 直接显示圆形图片
+          const imgUrl = item.icon.replace('img:', '');
+          favLink.innerHTML = `<img src="${imgUrl}" alt="${item.title}">`;
+        } else {
+          // Emoji头像 - 直接显示emoji
+          favLink.innerHTML = item.icon;
+        }
+        
+        // 添加tooltip
+        const tooltip = document.createElement('span');
+        tooltip.className = 'tooltip';
+        tooltip.textContent = item.title;
+        favLink.appendChild(tooltip);
+        
+        // 创建删除按钮
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'favorite-delete-btn';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.title = '删除收藏';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.removeFavorite(item.url);
+        });
+        
+        // 添加到包装器
+        favItem.appendChild(favLink);
+        favItem.appendChild(deleteBtn);
+        
+        // 添加到收藏栏，插入在添加按钮之前
+        favoritesContent.insertBefore(favItem, addBtn);
+      });
+      
+      // 添加牵连放大效果
+      this.addRippleZoomEffect();
+      
+      // 优化收藏夹中的头像
+      setTimeout(optimizeAvatars, 50);
+    }
+    
+    // 移除收藏
+    removeFavorite(url) {
+      const index = this.favorites.findIndex(item => item.url === url);
+      if (index > -1) {
+        this.favorites.splice(index, 1);
+        this.saveFavorites();
+        this.renderFavorites();
+      }
+    }
+    
+    // 添加牵连放大效果
+    addRippleZoomEffect() {
+      // 检测是否为移动端设备
+      const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+      if (isMobile) {
+        // 移动端禁用放大效果
+        return;
+      }
+      
+      const items = document.querySelectorAll('.favorite-item, .favorite-add-btn');
+      
+      items.forEach((item, index) => {
+        // 移除已有的事件监听器
+        item.removeEventListener('mouseenter', this.handleMouseEnter);
+        item.removeEventListener('mouseleave', this.handleMouseLeave);
+        
+        // 添加鼠标进入事件
+        item.addEventListener('mouseenter', () => {
+          // 当前项目放大
+          item.style.transform = 'scale(1.25) translateY(-12px)';
+          item.style.zIndex = '10001';
+          
+          // 左侧项目轻微放大
+          if (index > 0) {
+            const leftItem = items[index - 1];
+            leftItem.style.transform = 'scale(1.1) translateY(-8px)';
+            leftItem.style.zIndex = '10000';
+          }
+          
+          // 右侧项目轻微放大
+          if (index < items.length - 1) {
+            const rightItem = items[index + 1];
+            rightItem.style.transform = 'scale(1.1) translateY(-8px)';
+            rightItem.style.zIndex = '10000';
+          }
+        });
+        
+        // 添加鼠标离开事件
+        item.addEventListener('mouseleave', () => {
+          // 重置所有项目
+          items.forEach(i => {
+            i.style.transform = '';
+            i.style.zIndex = '';
+          });
+        });
+      });
+    }
+    
+    // 添加自定义网站
+    addCustomWebsite(title, url, icon) {
+      // 检查是否已经存在
+      if (this.favorites.some(item => item.url === url)) {
+        alert('该网站已经在收藏夹中了！');
+        return;
+      }
+      
+      this.favorites.push({
+        id: Date.now(),
+        title,
+        url,
+        icon
+      });
+      
+      this.saveFavorites();
+      this.renderFavorites();
+      
+      // 清空表单
+      document.getElementById('customWebsiteName').value = '';
+      document.getElementById('customWebsiteUrl').value = '';
+      document.getElementById('customWebsiteIcon').value = '📦';
+      
+      // 关闭添加卡片
+      this.toggleAddCard();
+    }
+    
+    // 切换添加收藏卡片显示
+    toggleAddCard() {
+      const addCard = document.getElementById('favoriteAddCard');
+      addCard.classList.toggle('show');
+    }
+    
+    // 设置事件监听器
+    setupEventListeners() {
+      // 添加按钮点击事件
+      const addBtn = document.getElementById('favoriteAddBtn');
+      addBtn.addEventListener('click', () => {
+        this.toggleAddCard();
+      });
+      
+      // 自定义添加按钮点击事件
+      const customAddBtn = document.getElementById('customAddBtn');
+      customAddBtn.addEventListener('click', () => {
+        const nameInput = document.getElementById('customWebsiteName');
+        const urlInput = document.getElementById('customWebsiteUrl');
+        const iconInput = document.getElementById('customWebsiteIcon');
+        
+        if (!nameInput || !urlInput || !iconInput) {
+          console.error('表单元素未找到');
+          return;
+        }
+        
+        const name = nameInput.value.trim();
+        const url = urlInput.value.trim();
+        let icon = iconInput.value.trim();
+        
+        if (!name || !url) {
+          alert('请填写完整的网站信息！');
+          return;
+        }
+        
+        // 确保URL格式正确
+        let formattedUrl = url;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          formattedUrl = 'https://' + url;
+        }
+        
+        // 确保图标不为空
+        if (!icon) {
+          icon = '📦';
+        }
+        
+        console.log('添加自定义网站:', { name, url: formattedUrl, icon });
+        this.addCustomWebsite(name, formattedUrl, icon);
+      });
+      
+      // 点击外部关闭添加卡片
+      document.addEventListener('click', (e) => {
+        const addCard = document.getElementById('favoriteAddCard');
+        const addBtn = document.getElementById('favoriteAddBtn');
+        
+        if (!addCard.contains(e.target) && e.target !== addBtn) {
+          addCard.classList.remove('show');
+        }
+      });
+      
+      // Emoji选择器功能
+      const emojiPickerBtn = document.getElementById('emojiPickerBtn');
+      const emojiPicker = document.getElementById('emojiPicker');
+      const customWebsiteIcon = document.getElementById('customWebsiteIcon');
+      
+      // 切换Emoji选择器显示
+      emojiPickerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        emojiPicker.style.display = emojiPicker.style.display === 'grid' ? 'none' : 'grid';
+      });
+      
+      // 选择Emoji
+      const emojiOptions = emojiPicker.querySelectorAll('.emoji-option');
+      emojiOptions.forEach(option => {
+        option.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const emoji = option.dataset.emoji;
+          customWebsiteIcon.value = emoji;
+          emojiPicker.style.display = 'none';
+        });
+      });
+      
+      // 点击外部关闭Emoji选择器
+      document.addEventListener('click', (e) => {
+        if (!emojiPicker.contains(e.target) && e.target !== emojiPickerBtn) {
+          emojiPicker.style.display = 'none';
+        }
+      });
+      
+      // 监听卡片添加事件
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+          if (mutation.type === 'childList') {
+            this.addFavoriteButtonsToCards();
+          }
+        });
+      });
+      
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+  }
+  
+  // 页面加载完成后初始化收藏夹
+  document.addEventListener('DOMContentLoaded', () => {
+    // 初始化收藏夹管理器，并设置为全局变量
+    window.favoritesManager = new FavoritesManager();
+  });
+</script>
 </body>
 </html>
 
