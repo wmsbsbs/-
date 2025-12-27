@@ -36,7 +36,7 @@
     "url": "https://yourdomain.com",
     "publisher": {
       "@type": "Organization",
-      "name": "智教导航团队",
+      "name": "R3n_011",
       "logo": {
         "@type": "ImageObject",
         "url": "https://youke1.picui.cn/s1/2025/10/19/68f48c81a0939.png"
@@ -77,6 +77,111 @@
       ]
     }
   }
+  </script>
+  
+  <script>
+    // 立体视差效果 - 只在非触控设备上启用
+    function initParallaxEffect() {
+      // 检测是否为触控设备
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+      
+      if (isTouchDevice) {
+        return; // 在触控设备上不启用视差效果
+      }
+      
+      // 为所有卡片添加视差效果
+      const cards = document.querySelectorAll('.nav-card');
+      
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          // 计算鼠标在卡片上的相对位置（0-1范围）
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const offsetX = (x - centerX) / centerX;
+          const offsetY = (y - centerY) / centerY;
+          
+          // 计算旋转角度，增加角度增强3D感
+          const rotateX = -offsetY * 12; // 上下移动影响X轴旋转
+          const rotateY = offsetX * 12;  // 左右移动影响Y轴旋转
+          
+          // 计算Z轴位移，产生下沉感，鼠标离中心越远，下沉越明显
+          const translateZ = -10 + Math.abs(offsetX) * 5 + Math.abs(offsetY) * 5;
+          
+          // 应用旋转和下沉效果到卡片
+          card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) translateZ(${translateZ}px) scale(1.03)`;
+          
+          // 为卡片内的元素添加不同的3D位移，增强层次感
+          const elements = card.querySelectorAll('*');
+          elements.forEach((el, index) => {
+            // 不同元素应用不同的3D位移，产生更明显的层次感
+            // 根据元素在DOM中的层级调整深度系数
+            const depth = (index + 1) * 0.4;
+            // 元素向相反方向位移，增强沉浸感
+            const translateX = offsetX * depth * 8;
+            const translateY = offsetY * depth * 8;
+            // 元素Z轴位移，产生前后层次
+            const elementZ = (index + 1) * 10;
+            
+            el.style.transform = `translate3d(${translateX}px, ${translateY}px, ${elementZ}px)`;
+          });
+          
+          // 更新CSS变量，控制黑色遮罩层的3D变换，产生下压效果
+          // 遮罩层使用与卡片主体相反的旋转角度，增强立体感
+          const maskRotateX = rotateX * -0.5;
+          const maskRotateY = rotateY * -0.5;
+          // 遮罩层向下压，Z轴位移为负值
+          const maskTranslateZ = -20 - Math.abs(offsetX) * 10 - Math.abs(offsetY) * 10;
+          
+          // 更新CSS变量
+          card.style.setProperty('--mask-rotate-x', `${maskRotateX}deg`);
+          card.style.setProperty('--mask-rotate-y', `${maskRotateY}deg`);
+          card.style.setProperty('--mask-translate-z', `${maskTranslateZ}px`);
+        });
+        
+        // 鼠标离开时重置卡片状态
+        card.addEventListener('mouseleave', () => {
+          // 重置卡片变换，保持一致的perspective值
+          card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) translateY(0) translateZ(0) scale(1)';
+          
+          // 重置所有子元素的变换
+          const elements = card.querySelectorAll('*');
+          elements.forEach(el => {
+            el.style.transform = 'translate3d(0, 0, 0)';
+          });
+          
+          // 重置黑色遮罩层的CSS变量，回到初始状态
+          card.style.setProperty('--mask-rotate-x', '0deg');
+          card.style.setProperty('--mask-rotate-y', '0deg');
+          card.style.setProperty('--mask-translate-z', '5px');
+        });
+      });
+    }
+    
+    // 页面加载完成后初始化视差效果
+    window.addEventListener('DOMContentLoaded', initParallaxEffect);
+    
+    // 当新的卡片被添加到页面时，重新初始化视差效果
+    // 监听DOM变化，处理动态添加的卡片
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'childList') {
+          // 检查是否有新的卡片被添加
+          const newCards = mutation.addedNodes;
+          newCards.forEach(node => {
+            if (node.nodeType === 1 && (node.classList.contains('nav-card') || node.querySelector('.nav-card'))) {
+              initParallaxEffect();
+            }
+          });
+        }
+      });
+    });
+    
+    // 启动观察者，监听整个文档的子节点变化
+    observer.observe(document.body, { childList: true, subtree: true });
   </script>
   <style>
     :root {
@@ -547,14 +652,14 @@
 
     .nav-card {
       background-color: var(--md-sys-color-surface);
-      border-radius: var(--md-sys-shape-corner-medium);
+      border-radius: 20px;
       padding: 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), backdrop-filter 0.3s ease, transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       cursor: pointer;
       text-decoration: none;
       color: inherit;
@@ -566,10 +671,30 @@
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 0.5s ease-out forwards;
+      transform-style: preserve-3d;
+      perspective: 1200px;
+      /* 添加3D基础变换，增强深度感 */
+      transform: translateY(20px) translateZ(0);
+      /* CSS变量，用于控制黑色遮罩层的3D变换 */
+      --mask-rotate-x: 0deg;
+      --mask-rotate-y: 0deg;
+      --mask-translate-z: 5px;
+      /* 添加边框，与新闻卡片保持一致 */
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+    
+    .nav-card * {
+      transform-style: preserve-3d;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     .light-theme .nav-card {
-      background-color: rgba(255, 251, 254, 0.8);
+      background-color: rgba(255, 251, 254, 0.95);
+    }
+    
+    /* 浅色主题下的遮罩层样式 */
+    .light-theme .nav-card::after {
+      background-color: rgba(0, 0, 0, 0.15);
     }
 
     .nav-card:nth-child(1) { animation-delay: 0.1s; }
@@ -591,17 +716,35 @@
       background: radial-gradient(circle at center, rgba(208, 188, 255, 0.15) 0%, transparent 70%);
       z-index: -1;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transform-style: preserve-3d;
+    }
+    
+    /* 添加黑色遮罩层作为最底层 */
+    .nav-card::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: calc(100% - 4px);
+      height: calc(100% - 4px);
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 18px;
+      z-index: -2;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      /* 使用CSS变量控制3D变换，实现根据鼠标位置的下压效果 */
+      transform: perspective(1200px) rotateX(var(--mask-rotate-x)) rotateY(var(--mask-rotate-y)) translateZ(var(--mask-translate-z));
     }
 
     .nav-card:hover {
       background-color: var(--md-sys-color-surface-variant);
-      transform: translateY(-8px) scale(1.02);
       box-shadow: 0px 12px 20px -6px rgba(0, 0, 0, 0.3), 0px 16px 24px 2px rgba(0, 0, 0, 0.2);
     }
 
     .light-theme .nav-card:hover {
       background-color: var(--md-sys-color-surface-variant);
+      box-shadow: 0px 12px 20px -6px rgba(0, 0, 0, 0.15), 0px 16px 24px 2px rgba(0, 0, 0, 0.1);
     }
 
     .nav-card:hover::before {
@@ -616,10 +759,9 @@
       width: 72px;
       height: 72px;
       border-radius: 50%;
-      object-fit: contain;
       margin: 0 auto 16px;
       border: 2px solid var(--md-sys-color-primary);
-      padding: 8px;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -627,6 +769,7 @@
       text-align: center;
       line-height: 1;
       background-color: var(--md-sys-color-surface);
+      overflow: visible;
     }
     
     /* 确保emoji不会超出容器 */
@@ -636,10 +779,29 @@
     
     /* 图片头像样式 */
     .nav-avatar img {
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       border-radius: 50%;
+      padding: 0;
+      margin: 0;
+      border: none;
+      background: none;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+    
+    /* 直接作为nav-avatar的图片样式 */
+    img.nav-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 16px;
+      border: 2px solid var(--md-sys-color-primary);
+      padding: 8px;
+      background-color: var(--md-sys-color-surface);
+      display: block;
     }
 
     .nav-card:hover .nav-avatar {
@@ -787,6 +949,17 @@
     }
 
     /* 淡出下滑动画 */
+    @keyframes fadeOutDown {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -891,34 +1064,43 @@
     .daily-quote-card {
       flex: 1;
       min-width: 300px;
-      background-color: var(--md-sys-color-surface);
-      border-radius: var(--md-sys-shape-corner-medium);
+      border-radius: 20px;
       padding: 24px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-      backdrop-filter: blur(10px);
-      background-color: rgba(28, 27, 31, 0.8);
-      color: var(--md-sys-color-on-surface);
+      box-sizing: border-box;
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 0.6s ease-out forwards;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      background-color: rgba(28, 27, 31, 0.8);
       border: 1px solid var(--md-sys-color-outline-variant);
+      box-sizing: border-box;
+      color: var(--md-sys-color-on-surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     /* 热点卡片样式 */
     .hotboard-card {
       flex: 1;
       min-width: 300px;
-      background-color: var(--md-sys-color-surface);
-      border-radius: var(--md-sys-shape-corner-medium);
-      padding: 24px;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-      backdrop-filter: blur(10px);
-      background-color: rgba(28, 27, 31, 0.8);
-      color: var(--md-sys-color-on-surface);
+      border-radius: 20px;
+      padding: 0;
+      margin: 0;
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 0.6s ease-out forwards 0.2s;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      background-color: rgba(28, 27, 31, 0.8);
       border: 1px solid var(--md-sys-color-outline-variant);
+      box-sizing: border-box;
     }
 
     .light-theme .daily-quote-card {
@@ -1144,10 +1326,7 @@
       text-decoration: underline;
     }
 
-    .hotboard-modal-item-hot {
-      font-size: 14px;
-      color: var(--md-sys-color-on-surface-variant);
-    }
+    
 
     /* 浅色主题适配 */
     .light-theme .hotboard-modal {
@@ -1202,11 +1381,7 @@
       color: var(--md-sys-color-primary);
       text-decoration: underline;
     }
-/*热度样式 */
-    .hotboard-item-hot {
-      font-size: 12px;
-      color: var(--md-sys-color-on-surface-variant);
-    }
+
 
     /* 全局滚动条样式 */
     ::-webkit-scrollbar {
@@ -1244,48 +1419,11 @@
       width: 8px;
     }
 
-    /* Mini恐龙游戏样式 */
-    .dino-game-container {
-      position: relative;
-      margin-top: 24px;
-      padding: 16px;
-      background-color: rgba(28, 27, 31, 0.6);
-      border-radius: var(--md-sys-shape-corner-medium);
-      border: 1px solid var(--md-sys-color-outline-variant);
-    }
+    /* 今日电影推荐样式 */
+    
 
-    .light-theme .dino-game-container {
+    .light-theme .today-movie-container {
       background-color: rgba(255, 251, 254, 0.6);
-    }
-
-    .dino-game-score {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--md-sys-color-primary);
-      z-index: 10;
-      background-color: rgba(28, 27, 31, 0.8);
-      padding: 4px 8px;
-      border-radius: var(--md-sys-shape-corner-small);
-    }
-
-    .light-theme .dino-game-score {
-      background-color: rgba(255, 251, 254, 0.8);
-    }
-
-    #dinoGameCanvas {
-      width: 100%;
-      height: 100px;
-      background-color: var(--md-sys-color-surface);
-      border-radius: var(--md-sys-shape-corner-small);
-      border: 1px solid var(--md-sys-color-outline);
-      cursor: pointer;
-    }
-
-    .light-theme #dinoGameCanvas {
-      background-color: var(--md-sys-color-surface-light);
     }
 
     /* 浅色主题滚动条适配 */
@@ -1299,12 +1437,10 @@
 
     /* 浅色主题适配 */
     .light-theme .hotboard-card {
-      background-color: rgba(255, 251, 254, 0.8);
+      background-color: transparent;
     }
 
-    .light-theme .hotboard-source-select {
-      background-color: var(--md-sys-color-surface-variant-light);
-    }
+    
 
     @keyframes fadeIn {
       from {
@@ -1522,6 +1658,7 @@
               <option value="baidu">百度</option>
               <option value="bing">Bing</option>
               <option value="360">360</option>
+              <option value="smartteach">智教联盟</option>
             </select>
             <input type="text" id="searchBar" class="search-bar" placeholder="搜索网站..." aria-label="搜索网站">
           </div>
@@ -1549,38 +1686,12 @@
         </div>
         <div class="daily-quote-content" id="dailyQuoteContent"></div>
         
-        <!-- Mini谷歌小恐龙游戏 -->
-        <div class="dino-game-container">
-          <canvas id="dinoGameCanvas" width="300" height="100"></canvas>
-          <div class="dino-game-score">分数: <span id="dinoScore">0</span></div>
-        </div>
+        
       </div>
       
-      <!-- 热点卡片 -->
+      <!-- 实时热点 -->
       <div class="hotboard-card" id="hotboardCard">
-        <div class="hotboard-header">
-          <span class="hotboard-title">实时热点</span>
-          <select class="hotboard-source-select" id="hotboardSourceSelect">
-            <!-- 选项将通过JavaScript动态生成 -->
-          </select>
-        </div>
-        <ul class="hotboard-list" id="hotboardList">
-          <!-- 热点列表将通过JavaScript动态生成 -->
-        </ul>
-        <button class="expand-button" id="expandHotboardButton">查看更多热点</button>
-      </div>
-      
-      <!-- 热点弹窗 -->
-      <div class="hotboard-modal" id="hotboardModal">
-        <div class="hotboard-modal-content">
-          <div class="hotboard-modal-header">
-            <h2 class="hotboard-modal-title" id="hotboardModalTitle">实时热点</h2>
-            <button class="close-modal-button" id="closeHotboardModal" aria-label="关闭">✕</button>
-          </div>
-          <ul class="hotboard-modal-list" id="hotboardModalList">
-            <!-- 弹窗热点列表将通过JavaScript动态生成 -->
-          </ul>
-        </div>
+        <iframe src="https://www.widgets.link/#/tools-hot-news02?bg=&cbg=363842&tc=fff&_b=true" width="100%" height="252" frameborder="0" scrolling="no" style="border-radius: 20px;"></iframe>
       </div>
     </div>
     
@@ -1605,7 +1716,7 @@
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     z-index: 9999;
-    transition: left 0.3s ease;
+    transition: left 0.3s ease, backdrop-filter 0.3s ease;
     overflow-y: auto;
   ">
     <div class="side-nav-header" style="
@@ -1650,7 +1761,7 @@
     backdrop-filter: blur(5px);
     z-index: 9998;
     display: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
   "></div>
   
   <!-- 调色盘窗口 -->
@@ -1666,7 +1777,7 @@
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
   ">
     <div class="color-palette" style="
       background-color: var(--md-sys-color-surface);
@@ -1676,6 +1787,7 @@
       max-width: 500px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       animation: fadeInUp 0.3s ease-out;
+      position: relative;
     ">
       <div class="palette-header" style="
         display: flex;
@@ -1962,20 +2074,69 @@
             ">
           </div>
           
-          <!-- 应用背景按钮 -->
-          <button id="applyBackground" class="apply-background" style="
-            padding: 12px 24px;
-            border-radius: var(--md-sys-shape-corner-medium);
-            border: 2px solid var(--md-sys-color-outline);
-            background-color: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-on-primary-container);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: var(--md-sys-typescale-body-large-font);
-            font-size: var(--md-sys-typescale-body-large-size);
-            line-height: var(--md-sys-typescale-body-large-line-height);
-          ">应用背景</button>
+          <!-- 背景模式选择 -->
+          <div class="background-mode-section" style="margin-bottom: 16px;">
+            <label style="
+              display: block;
+              font-family: var(--md-sys-typescale-body-large-font);
+              font-size: var(--md-sys-typescale-body-large-size);
+              line-height: var(--md-sys-typescale-body-large-line-height);
+              color: var(--md-sys-color-on-surface-variant);
+              margin-bottom: 8px;
+            ">背景模式</label>
+            <div class="background-mode-options" style="
+              display: flex;
+              gap: 12px;
+              margin-bottom: 16px;
+            ">
+              <button class="background-mode-option" data-mode="window" style="
+                padding: 12px 24px;
+                border-radius: var(--md-sys-shape-corner-medium);
+                border: 2px solid var(--md-sys-color-outline);
+                background-color: var(--md-sys-color-surface-variant);
+                color: var(--md-sys-color-on-surface-variant);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: var(--md-sys-typescale-body-large-font);
+                font-size: var(--md-sys-typescale-body-large-size);
+                line-height: var(--md-sys-typescale-body-large-line-height);
+              ">窗口背景</button>
+              <button class="background-mode-option" data-mode="fullscreen" style="
+                padding: 12px 24px;
+                border-radius: var(--md-sys-shape-corner-medium);
+                border: 2px solid var(--md-sys-color-outline);
+                background-color: var(--md-sys-color-surface-variant);
+                color: var(--md-sys-color-on-surface-variant);
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-family: var(--md-sys-typescale-body-large-font);
+                font-size: var(--md-sys-typescale-body-large-size);
+                line-height: var(--md-sys-typescale-body-large-line-height);
+              ">全屏背景</button>
+            </div>
+          </div>
+          
         </div>
+      </div>
+      
+      <!-- 确定按钮 - 位于右下角 -->
+      <div style="
+        position: absolute;
+        bottom: 24px;
+        right: 24px;
+      ">
+        <button id="applyBackground" class="apply-background" style="
+          padding: 12px 24px;
+          border-radius: var(--md-sys-shape-corner-medium);
+          border: 2px solid var(--md-sys-color-outline);
+          background-color: var(--md-sys-color-primary-container);
+          color: var(--md-sys-color-on-primary-container);
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-family: var(--md-sys-typescale-body-large-font);
+          font-size: var(--md-sys-typescale-body-large-size);
+          line-height: var(--md-sys-typescale-body-large-line-height);
+        ">确定</button>
       </div>
     </div>
   </div>
@@ -1983,8 +2144,7 @@
   <footer class="footer" role="contentinfo" style="margin-top: 60px; padding: 20px; text-align: center; font-size: 14px; color: var(--md-sys-color-on-surface-variant);">
     <p>© 2025 智教导航 - R3n_011打造</p>
     <p style="margin-top: 8px;">本网站提供的所有链接均指向第三方网站，智教导航不对其内容负责。</p>
-    <p style="margin-top: 8px;">v0.1 beta</p>
-    <a href="http://dianjiao.tttttttttt.top" target="_blank" title="本网站改编自R3n_011的电教导航，点击去往R3n_011的官方站点">版权信息：由R3n_011打造,所有人拥有对该开源部分代码的修改与再发行权限<a>
+    <p style="margin-top: 8px;">v1.2</p>
   </footer>
 
   <script>
@@ -2015,15 +2175,26 @@
     // 支持的热榜来源
     const hotboardSources = {
       // 视频/社区
+      'bilibili': '哔哩哔哩',
       'acfun': 'A站',
+      'weibo': '新浪微博',
+      'zhihu': '知乎',
       'zhihu-daily': '知乎日报',
       'douyin': '抖音',
       'kuaishou': '快手',
       'douban-movie': '豆瓣电影',
+      'douban-group': '豆瓣小组',
+      'tieba': '百度贴吧',
       'hupu': '虎扑',
+      'miyoushe': '米游社',
+      'ngabbs': 'NGA游戏论坛',
+      'v2ex': 'V2EX技术社区',
+      '52pojie': '吾爱破解',
+      'hostloc': '全球主机交流论坛',
       'coolapk': '酷安',
       // 新闻/资讯
       'baidu': '百度热搜',
+      'thepaper': '澎湃新闻',
       'toutiao': '今日头条',
       'qq-news': '腾讯新闻',
       'sina': '新浪热搜',
@@ -2036,10 +2207,12 @@
       'ithome': 'IT之家',
       'ithome-xijiayi': 'IT之家·喜加一',
       'juejin': '掘金',
+      'jianshu': '简书',
       'guokr': '果壳',
       '36kr': '36氪',
       '51cto': '51CTO',
       'csdn': 'CSDN',
+      'nodeseek': 'NodeSeek 技术社区',
       'hellogithub': 'HelloGitHub',
       // 游戏
       'lol': '英雄联盟',
@@ -2048,6 +2221,8 @@
       'starrail': '星穹铁道',
       // 其他
       'weread': '微信读书',
+      'weatheralarm': '天气预警信息',
+      'earthquake': '地震速报',
       'history': '历史上的今天'
     };
 
@@ -2076,15 +2251,26 @@
     }
 
     // 获取热榜数据
-    async function fetchHotboard(source = 'baidu') {
+    async function fetchHotboard(source = 'baidu', retryCount = 0, maxRetries = 3) {
       try {
-        const response = await fetch(`https://uapis.cn/api/v1/misc/hotboard?type=${source}`);
-        const data = await response.json();
+        // 使用AllOrigins代理解决CORS问题
+        const apiUrl = `https://uapis.cn/api/v1/misc/hotboard?type=${source}`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+        const response = await fetch(proxyUrl);
+        const proxyData = await response.json();
+        // 解析原始API响应内容
+        const data = JSON.parse(proxyData.contents);
         // 保存当前热榜数据
         currentHotboardData = data;
         return data;
       } catch (error) {
         console.error('获取热榜失败:', error);
+        // 如果重试次数未达上限，等待2秒后重试
+        if (retryCount < maxRetries) {
+          console.log(`将在2秒后重试获取热榜，剩余重试次数: ${maxRetries - retryCount}`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          return fetchHotboard(source, retryCount + 1, maxRetries);
+        }
         return null;
       }
     }
@@ -2106,13 +2292,16 @@
         const li = document.createElement('li');
         li.className = 'hotboard-item';
         
+        const title = item.title || item.extra?.desc || '未知标题';
+        // 如果原始URL为空，使用百度搜索该标题作为跳转链接
+        const url = item.url || `https://www.baidu.com/s?wd=${encodeURIComponent(title)}`;
+        
         li.innerHTML = `
           <div class="hotboard-rank">${item.index}</div>
           <div class="hotboard-item-content">
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
-              <div class="hotboard-item-title">${item.title}</div>
+            <a href="${url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+              <div class="hotboard-item-title">${title}</div>
             </a>
-            <div class="hotboard-item-hot">热度: ${item.hot_value}</div>
           </div>
         `;
         
@@ -2136,13 +2325,16 @@
         const li = document.createElement('li');
         li.className = 'hotboard-modal-item';
         
+        const title = item.title || item.extra?.desc || '未知标题';
+        // 如果原始URL为空，使用百度搜索该标题作为跳转链接
+        const url = item.url || `https://www.baidu.com/s?wd=${encodeURIComponent(title)}`;
+        
         li.innerHTML = `
           <div class="hotboard-modal-rank">${item.index}</div>
           <div class="hotboard-modal-content-item">
-            <a href="${item.url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
-              <div class="hotboard-modal-item-title">${item.title}</div>
+            <a href="${url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+              <div class="hotboard-modal-item-title">${title}</div>
             </a>
-            <div class="hotboard-modal-item-hot">热度: ${item.hot_value}</div>
           </div>
         `;
         
@@ -2243,254 +2435,8 @@
     });
 
     // 页面加载时初始化热榜
-    window.addEventListener('load', initHotboard);
-
-    // Mini恐龙游戏逻辑
-    class DinoGame {
-      constructor() {
-        this.canvas = document.getElementById('dinoGameCanvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.scoreElement = document.getElementById('dinoScore');
-        
-        // 游戏状态
-        this.gameRunning = false;
-        this.score = 0;
-        this.speed = 3;
-        
-        // 恐龙属性
-        this.dino = {
-          x: this.canvas.width - 40,
-          y: 70,
-          width: 18,
-          height: 24,
-          jumping: false,
-          jumpHeight: 0,
-          jumpSpeed: 0,
-          maxJumpHeight: 40,
-          jumpVelocity: 8
-        };
-        
-        // 障碍物数组
-        this.obstacles = [];
-        this.obstacleSpawnTimer = 0;
-        this.obstacleSpawnInterval = 60;
-        
-        // 云数组
-        this.clouds = [];
-        this.cloudSpawnTimer = 0;
-        this.cloudSpawnInterval = 120;
-        
-        // 按键状态
-        this.keys = {};
-        
-        // 初始化
-        this.init();
-      }
-      
-      init() {
-        // 绑定键盘事件
-        document.addEventListener('keydown', (e) => {
-          this.keys[e.code] = true;
-          if (e.code === 'Space' && !this.gameRunning) {
-            this.start();
-          }
-        });
-        
-        document.addEventListener('keyup', (e) => {
-          this.keys[e.code] = false;
-        });
-        
-        // 绑定点击事件
-        this.canvas.addEventListener('click', () => {
-          if (!this.gameRunning) {
-            this.start();
-          } else {
-            this.jump();
-          }
-        });
-        
-        // 初始渲染
-        this.render();
-      }
-      
-      start() {
-        this.gameRunning = true;
-        this.score = 0;
-        this.speed = 3;
-        this.obstacles = [];
-        this.obstacleSpawnTimer = 0;
-        this.updateScore();
-        this.gameLoop();
-      }
-      
-      jump() {
-        if (!this.dino.jumping) {
-          this.dino.jumping = true;
-          this.dino.jumpSpeed = -this.dino.jumpVelocity;
-        }
-      }
-      
-      update() {
-        // 处理按键
-        if (this.keys['Space']) {
-          this.jump();
-        }
-        
-        // 更新恐龙位置
-        if (this.dino.jumping) {
-          this.dino.y += this.dino.jumpSpeed;
-          this.dino.jumpSpeed += 0.5; // 重力
-          
-          if (this.dino.y >= 70) {
-            this.dino.y = 70;
-            this.dino.jumping = false;
-          }
-        }
-        
-        // 生成障碍物
-        this.obstacleSpawnTimer++;
-        if (this.obstacleSpawnTimer >= this.obstacleSpawnInterval) {
-          this.obstacles.push({
-            x: -20,
-            y: 70,
-            width: 15,
-            height: 20
-          });
-          this.obstacleSpawnTimer = 0;
-          
-          // 随机调整生成间隔
-          this.obstacleSpawnInterval = Math.random() * 30 + 40;
-        }
-        
-        // 更新障碍物位置
-        for (let i = this.obstacles.length - 1; i >= 0; i--) {
-          const obstacle = this.obstacles[i];
-          obstacle.x += this.speed;
-          
-          // 移除超出画布的障碍物
-          if (obstacle.x > this.canvas.width) {
-            this.obstacles.splice(i, 1);
-            this.score++;
-            this.updateScore();
-            
-            // 随着分数增加，提高游戏速度,改了，是说怪怪的
-            if (this.score % 10 === 0) {
-              this.speed += 0;
-            }
-          }
-          
-          // 碰撞检测
-          if (this.checkCollision(this.dino, obstacle)) {
-            this.gameOver();
-            return;
-          }
-        }
-        
-        // 生成云
-        this.cloudSpawnTimer++;
-        if (this.cloudSpawnTimer >= this.cloudSpawnInterval) {
-          // 云速度：基础速度 - 游戏速度 * 系数，速度越高云越慢，符合透视原理
-          const baseCloudSpeed = 2;
-          const cloudSpeed = baseCloudSpeed - this.speed * 0.1;
-          
-          this.clouds.push({
-            x: -30,
-            y: Math.random() * 30 + 10,
-            width: 30,
-            height: 15,
-            speed: Math.max(cloudSpeed, 0.3) // 确保云有最小速度
-          });
-          this.cloudSpawnTimer = 0;
-          
-          // 随机调整生成间隔
-          this.cloudSpawnInterval = Math.random() * 60 + 120;
-        }
-        
-        // 更新云位置
-        for (let i = this.clouds.length - 1; i >= 0; i--) {
-          const cloud = this.clouds[i];
-          cloud.x += cloud.speed;
-          
-          // 移除超出画布的云
-          if (cloud.x > this.canvas.width) {
-            this.clouds.splice(i, 1);
-          }
-        }
-      }
-      
-      checkCollision(rect1, rect2) {
-        return rect1.x < rect2.x + rect2.width &&
-               rect1.x + rect1.width > rect2.x &&
-               rect1.y < rect2.y + rect2.height &&
-               rect1.y + rect1.height > rect2.y;
-      }
-      
-      render() {
-        // 清空画布
-        this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-surface');
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // 绘制地面
-        this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-outline');
-        this.ctx.fillRect(0, 90, this.canvas.width, 2);
-        
-        // 绘制云
-        this.clouds.forEach(cloud => {
-          this.ctx.font = '20px Arial';
-          this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-on-surface-variant');
-          this.ctx.fillText('☁️', cloud.x, cloud.y + cloud.height);
-        });
-        
-        // 绘制恐龙
-        this.ctx.font = '20px Arial';
-        this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-on-surface');
-        this.ctx.fillText('🦖', this.dino.x, this.dino.y + this.dino.height);
-        
-        // 绘制障碍物
-        this.obstacles.forEach(obstacle => {
-          this.ctx.font = '20px Arial';
-          this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-on-surface');
-          this.ctx.fillText('🌵', obstacle.x, obstacle.y + obstacle.height);
-        });
-        
-        // 游戏开始提示
-        if (!this.gameRunning) {
-          this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-on-surface-variant');
-          this.ctx.font = '16px Arial';
-          this.ctx.textAlign = 'center';
-          this.ctx.fillText('点击或按空格键开始', this.canvas.width / 2, this.canvas.height / 2);
-          this.ctx.textAlign = 'left';
-        }
-      }
-      
-      gameLoop() {
-        if (!this.gameRunning) return;
-        
-        this.update();
-        this.render();
-        requestAnimationFrame(() => this.gameLoop());
-      }
-      
-      gameOver() {
-        this.gameRunning = false;
-        
-        // 显示游戏结束
-        this.ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--md-sys-color-on-surface-variant');
-        this.ctx.font = '16px Arial';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('游戏结束！按空格键重新开始', this.canvas.width / 2, this.canvas.height / 2 + 20);
-        this.ctx.textAlign = 'left';
-      }
-      
-      updateScore() {
-        this.scoreElement.textContent = this.score;
-      }
-    }
+   
     
-    // 初始化游戏
-    window.addEventListener('load', () => {
-      new DinoGame();
-    });
 
     // 网站加载完成后隐藏遮罩
     window.addEventListener('load', () => {
@@ -2523,8 +2469,8 @@
           { 
             title: "ClassIsland", 
             description: "大屏课表工具", 
-            emoji:"📅",
-          //改错了。。。
+            avatar:"https://res.classisland.tech/logo.svg",
+            //改错了。。。
             url: "https://classisland.tech/",
             developer: "ClassIsland团队",
             addedDate: "2025-10-19",
@@ -2544,7 +2490,7 @@
           { 
             title: "希沃", 
             description: "中国教育企业龙头品牌", 
-            avatar: "https://ts4.tc.mm.bing.net/th/id/ODF.cOOcFFoJd36P9UsSXyZdPA?w=32&h=32&qlt=90&pcl=fffffc&o=6&cb=ucfimg1&pid=1.2&ucfimg=1", 
+            avatar: "https://www.seewo.com/images/logo1.svg", 
             url: "https://www.seewo.com/",
             developer: "希沃",
             addedDate: "2025-10-19",
@@ -2552,8 +2498,7 @@
           }
         ]
       },
-      {
-        category: "开发工具",
+      {        category: "开发工具",
         id: "devSection",
         icon: "code",
         sites: [
@@ -2577,6 +2522,36 @@
             detailedDesc: "Stack Overflow是全球最大的程序员问答社区，提供技术问题解答和知识分享。"
           },
           
+          { 
+            title: "trae", 
+            description: "超级 AI 开发工程师", 
+            avatar: "https://ts4.tc.mm.bing.net/th/id/ODF.YIp5-bd6aV_n2t3WPPiW7w?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2", 
+            url: "https://www.trae.cn",
+            developer: "字节跳动",
+            addedDate: "2025-12-27",
+            detailedDesc: "TRAE ，一个能理解需求、调动工具、独立完成各类开发任务的超级 AI 开发工程师，助你高效推进项目每一步。",
+            bilibiliIframe: '<iframe src="https://player.bilibili.com/player.html?bvid=BV1y9uRzTEy2&page=1" width="100%" height="400" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>'
+          },
+          
+          { 
+            title: "intellij idea", 
+            description: "专业开发的首选 IDE", 
+            avatar: "https://www.jetbrains.com/favicon.ico", 
+            url: "https://www.jetbrains.com/idea/",
+            developer: "jetbrains",
+            addedDate: "2025-12-27",
+            detailedDesc: "专业开发的首选 IDE"
+          },
+          
+          { 
+            title: "Android Studio", 
+            description: "用于开发 Android 应用的官方 IDE", 
+            avatar: "https://ts1.tc.mm.bing.net/th/id/ODF.n5FekavbQrTH3QtkWT3z4w?w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2", 
+            url: "https://developer.android.com/studio",
+            developer: "Google",
+            addedDate: "2025-12-27",
+            detailedDesc: "Android Studio 是用于开发 Android 应用的官方集成开发环境 (IDE)。Android Studio 基于 IntelliJ IDEA 强大的代码编辑器和开发者工具，还提供更多可提高 Android 应用构建效率的功能。"
+          },
         ]
       },
       {
@@ -2595,6 +2570,43 @@
           },
           ]
        },
+      {
+        category: "课堂工具",
+        id: "classSection",
+        icon: "school",
+        sites: [
+          { 
+            title: "classworks", 
+            description: "适用于班级大屏的作业板小工具", 
+            avatar: "https://avatars.githubusercontent.com/u/123870991?s=48&v=4", 
+            url: "https://classworks.sunwuyuan.com/",
+            developer: "Sunwuyuan",
+            addedDate: "2025-12-27",
+            detailedDesc: "适用于班级大屏的作业板小工具"
+          },
+          
+          { 
+            title: "ExamAware", 
+            description: "智能考试信息显示工具", 
+            avatar: "https://avatars.githubusercontent.com/u/195304368?s=200&v=4", 
+            url: "https://examaware.dsz.org/",
+            developer: "DSZ ExamAware团队",
+            addedDate: "2025-12-27",
+            detailedDesc: "一款能在考试时显示考试信息的跨平台软件。"
+          },
+          
+          { 
+            title: "智绘教inkeys", 
+            description: "全能型屏幕批注工具", 
+            avatar: "https://www.inkeys.top/Inkeys.svg", 
+            url: "https://www.inkeys.top/",
+            developer: "AlanCRL(陈润林) 工作室",
+            addedDate: "2025-12-27",
+            detailedDesc: "Windows 屏幕批注工具，拥有高效批注和丰富功能，让屏幕演示变得简单，让教学授课变得高效，适用于触摸设备和PC端",
+            bilibiliIframe: '<iframe src="https://player.bilibili.com/player.html?bvid=BV17duZzYEsE&page=1" width="100%" height="400" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>'
+          },
+        ]
+      },
        {
         category: "申请收录",
         id: "contactSection",
@@ -2698,8 +2710,8 @@
             expandedAvatarHTML = `<div class="nav-avatar" style="font-size: 32px; width: 56px; height: 56px; margin-bottom: 0; margin-right: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); border: 2px solid var(--md-sys-color-primary);">${site.emoji}</div>`;
           } else if (site.avatar) {
             // 使用图片
-            avatarHTML = `<img src="${site.avatar}" alt="${site.title}" class="nav-avatar" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid var(--md-sys-color-primary); transition: all 0.3s ease;">`;
-            expandedAvatarHTML = `<img src="${site.avatar}" alt="${site.title}" class="nav-avatar" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 0; margin-right: 16px; border: 2px solid var(--md-sys-color-primary);">`;
+            avatarHTML = `<div class="nav-avatar" style="width: 64px; height: 64px; padding: 8px; border-radius: 50%; background-color: var(--md-sys-color-surface); border: 2px solid var(--md-sys-color-primary);"><img src="${site.avatar}" alt="${site.title}" style="object-fit: contain; width: 100%; height: 100%; border-radius: 0;"></div>`;
+            expandedAvatarHTML = `<div class="nav-avatar" style="width: 56px; height: 56px; margin-bottom: 0; margin-right: 16px; padding: 8px; border-radius: 50%; background-color: var(--md-sys-color-surface); border: 2px solid var(--md-sys-color-primary);"><img src="${site.avatar}" alt="${site.title}" style="object-fit: contain; width: 100%; height: 100%; border-radius: 0;"></div>`;
           } else {
             // 使用默认emoji
             const defaultEmoji = '🌐';
@@ -2738,6 +2750,9 @@
         section.appendChild(grid);
         container.appendChild(section);
       });
+      
+      // 渲染完成后优化头像
+      setTimeout(optimizeAvatars, 100);
     }
     
     // 显示卡片详情弹窗
@@ -2759,10 +2774,30 @@
       
       // 生成头像HTML
       let avatarHTML = '';
-      if (avatarElement.tagName === 'IMG') {
-        avatarHTML = `<img src="${avatarElement.src}" alt="${title}" class="nav-avatar" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--md-sys-color-primary);">`;
-      } else {
-        avatarHTML = `<div class="nav-avatar" style="font-size: 32px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); border: 2px solid var(--md-sys-color-primary);">${avatarElement.textContent}</div>`;
+      
+      // 直接克隆当前头像元素的HTML，确保样式同步
+      if (avatarElement) {
+        const avatarClone = avatarElement.cloneNode(true);
+        // 调整大小以适应弹窗
+        avatarClone.style.width = '64px';
+        avatarClone.style.height = '64px';
+        
+        // 重置transform属性，防止视差效果导致头像错位
+        avatarClone.style.transform = 'translate3d(0, 0, 0)';
+        
+        // 如果是emoji容器，调整字体大小
+        const hasImg = avatarClone.querySelector('img');
+        if (!hasImg) {
+          avatarClone.style.fontSize = '32px';
+        }
+        
+        // 确保所有子元素的transform也被重置
+        const childElements = avatarClone.querySelectorAll('*');
+        childElements.forEach(el => {
+          el.style.transform = 'translate3d(0, 0, 0)';
+        });
+        
+        avatarHTML = avatarClone.outerHTML;
       }
       
       // 创建弹窗HTML
@@ -2780,6 +2815,7 @@
           justify-content: center;
           z-index: 10000;
           animation: fadeIn 0.3s ease-out;
+          transition: backdrop-filter 0.3s ease;
         ">
           <div class="card-dialog" style="
             background-color: var(--md-sys-color-surface);
@@ -3004,7 +3040,8 @@
             const searchEngineUrls = {
               'baidu': `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`,
               'bing': `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
-              '360': `https://www.so.com/s?q=${encodeURIComponent(query)}`
+              '360': `https://www.so.com/s?q=${encodeURIComponent(query)}`,
+              'smartteach': `https://forum.smart-teach.cn/?q=${encodeURIComponent(query)}%20is%3Asolved`
             };
             window.open(searchEngineUrls[searchType.value], '_blank');
           }
@@ -3050,7 +3087,7 @@
           avatarHTML = `<div class="nav-avatar" style="width: 40px; height: 40px; margin-bottom: 4px; border-radius: 50%; background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid var(--md-sys-color-primary); padding: 4px;">${site.emoji}</div>`;
         } else if (site.avatar) {
           // 使用图片
-          avatarHTML = `<img src="${site.avatar}" alt="${site.title}" class="nav-avatar" style="width: 40px; height: 40px; margin-bottom: 4px; border-radius: 50%; object-fit: contain; border: 2px solid var(--md-sys-color-primary); padding: 2px; background-color: var(--md-sys-color-surface);">`;
+          avatarHTML = `<div class="nav-avatar" style="width: 40px; height: 40px; margin-bottom: 4px; border: 2px solid var(--md-sys-color-primary); padding: 2px; background-color: var(--md-sys-color-surface);"><img src="${site.avatar}" alt="${site.title}" style="object-fit: contain; width: 100%; height: 100%; border-radius: 50%;"></div>`;
         } else {
           // 使用默认emoji
           avatarHTML = `<div class="nav-avatar" style="width: 40px; height: 40px; margin-bottom: 4px; border-radius: 50%; background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid var(--md-sys-color-primary); padding: 4px;">🌐</div>`;
@@ -3077,14 +3114,16 @@
       const searchEngineUrls = {
         'baidu': `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`,
         'bing': `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
-        '360': `https://www.so.com/s?q=${encodeURIComponent(query)}`
+        '360': `https://www.so.com/s?q=${encodeURIComponent(query)}`,
+        'smartteach': `https://forum.smart-teach.cn/?q=${encodeURIComponent(query)}`
       };
       
       // 搜索引擎名称
       const searchEngineNames = {
         'baidu': '百度',
         'bing': 'Bing',
-        '360': '360搜索'
+        '360': '360搜索',
+        'smartteach': '智教联盟'
       };
       
       // 生成搜索建议
@@ -3108,7 +3147,8 @@
         const engineIcons = {
           'baidu': '🔍',
           'bing': '🌐',
-          '360': '💡'
+          '360': '💡',
+          'smartteach': '🎓'
         };
         
         item.innerHTML = `
@@ -3269,6 +3309,305 @@
       });
     }
     
+    // 计算两个颜色之间的差异 (RGB空间)
+    function colorDistance(color1, color2) {
+      const rDiff = color1.r - color2.r;
+      const gDiff = color1.g - color2.g;
+      const bDiff = color1.b - color2.b;
+      return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+    }
+
+    // 优化头像大小，确保边缘与边框色差在可接受范围内
+    function optimizeAvatarSize(imgElement) {
+      // 获取边框颜色
+      const computedStyle = window.getComputedStyle(imgElement);
+      const borderColor = computedStyle.borderColor;
+      
+      // 解析边框颜色
+      let borderRGB = { r: 0, g: 0, b: 0 };
+      if (borderColor.startsWith('rgb')) {
+        const rgbMatch = borderColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (rgbMatch) {
+          borderRGB = {
+            r: parseInt(rgbMatch[1]),
+            g: parseInt(rgbMatch[2]),
+            b: parseInt(rgbMatch[3])
+          };
+        }
+      }
+      
+      // 创建一个临时canvas来分析图像
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 设置canvas大小与图像显示大小一致
+      const displayWidth = imgElement.offsetWidth;
+      const displayHeight = imgElement.offsetHeight;
+      canvas.width = displayWidth;
+      canvas.height = displayHeight;
+      
+      // 绘制图像到canvas
+      ctx.drawImage(imgElement, 0, 0, displayWidth, displayHeight);
+      
+      // 获取图像数据
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // 定义色差阈值 (肉眼可见的阈值约为20-30)
+      const colorThreshold = 25;
+      
+      // 检查圆形边缘的像素色差
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(centerX, centerY);
+      
+      let maxDistance = 0;
+      
+      // 检查圆形边缘的像素
+      for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+        const x = Math.round(centerX + radius * Math.cos(angle));
+        const y = Math.round(centerY + radius * Math.sin(angle));
+        
+        // 确保坐标在图像范围内
+        if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
+          const index = (y * canvas.width + x) * 4;
+          const pixelColor = {
+            r: data[index],
+            g: data[index + 1],
+            b: data[index + 2]
+          };
+          const distance = colorDistance(pixelColor, borderRGB);
+          maxDistance = Math.max(maxDistance, distance);
+        }
+      }
+      
+      // 如果色差超过阈值，缩小头像
+      if (maxDistance > colorThreshold) {
+        // 计算缩小比例，确保头像不会太小
+        const currentWidth = parseInt(imgElement.style.width || imgElement.offsetWidth);
+        const currentHeight = parseInt(imgElement.style.height || imgElement.offsetHeight);
+        
+        if (currentWidth > 20 && currentHeight > 20) {
+          const newWidth = Math.round(currentWidth * 0.95);
+          const newHeight = Math.round(currentHeight * 0.95);
+          
+          imgElement.style.width = `${newWidth}px`;
+          imgElement.style.height = `${newHeight}px`;
+          
+          // 重新计算margin，保持居中
+          imgElement.style.margin = `0 auto 16px`;
+        }
+      }
+    }
+
+    // 提取图片的平均色（优化性能版本）
+    function getAverageColor(img) {
+      // 检查是否已缓存
+      if (img.dataset.avgColor) {
+        const [r, g, b] = img.dataset.avgColor.split(',').map(Number);
+        return { r, g, b };
+      }
+      
+      // 创建Canvas元素
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 缩小Canvas尺寸，减少计算量（只处理10x10像素）
+      const sampleSize = 10;
+      canvas.width = sampleSize;
+      canvas.height = sampleSize;
+      
+      // 在Canvas上绘制图片（缩小采样）
+      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+      
+      // 获取图片数据
+      const imageData = ctx.getImageData(0, 0, sampleSize, sampleSize);
+      const data = imageData.data;
+      
+      // 计算平均颜色（只处理缩小后的像素）
+      let r = 0, g = 0, b = 0;
+      const pixelCount = data.length / 4;
+      
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        // 忽略alpha通道
+      }
+      
+      r = Math.round(r / pixelCount);
+      g = Math.round(g / pixelCount);
+      b = Math.round(b / pixelCount);
+      
+      // 缓存结果
+      img.dataset.avgColor = `${r},${g},${b}`;
+      
+      return { r, g, b };
+    }
+
+    // 优化头像大小（优化性能版本，只在必要时执行）
+    function optimizeAvatarSize(img) {
+      // 检查是否已优化
+      if (img.dataset.optimized) return;
+      
+      // 标记为已优化
+      img.dataset.optimized = 'true';
+      
+      // 获取边框颜色
+      const computedStyle = window.getComputedStyle(img.parentElement);
+      const borderColor = computedStyle.borderColor;
+      
+      // 解析边框颜色
+      let borderRGB = { r: 0, g: 0, b: 0 };
+      if (borderColor.startsWith('rgb')) {
+        const rgbMatch = borderColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (rgbMatch) {
+          borderRGB = {
+            r: parseInt(rgbMatch[1]),
+            g: parseInt(rgbMatch[2]),
+            b: parseInt(rgbMatch[3])
+          };
+        }
+      }
+      
+      // 创建一个临时canvas来分析图像
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // 缩小Canvas尺寸，减少计算量（只处理20x20像素）
+      const sampleSize = 20;
+      canvas.width = sampleSize;
+      canvas.height = sampleSize;
+      
+      // 绘制图像到canvas
+      ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+      
+      // 获取图像数据
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // 定义色差阈值 (肉眼可见的阈值约为20-30)
+      const colorThreshold = 25;
+      
+      // 检查圆形边缘的像素色差
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(centerX, centerY);
+      
+      let maxDistance = 0;
+      
+      // 只检查关键角度的像素（每30度检查一个点，共12个点）
+      for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 6) {
+        const x = Math.round(centerX + radius * Math.cos(angle));
+        const y = Math.round(centerY + radius * Math.sin(angle));
+        
+        // 确保坐标在图像范围内
+        if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
+          const index = (y * canvas.width + x) * 4;
+          const pixelColor = {
+            r: data[index],
+            g: data[index + 1],
+            b: data[index + 2]
+          };
+          const distance = colorDistance(pixelColor, borderRGB);
+          maxDistance = Math.max(maxDistance, distance);
+        }
+      }
+      
+      // 如果色差超过阈值，缩小头像
+      if (maxDistance > colorThreshold) {
+        // 计算缩小比例，确保头像不会太小
+        const currentWidth = parseInt(img.style.width || img.offsetWidth);
+        const currentHeight = parseInt(img.style.height || img.offsetHeight);
+        
+        if (currentWidth > 20 && currentHeight > 20) {
+          const newWidth = Math.round(currentWidth * 0.95);
+          const newHeight = Math.round(currentHeight * 0.95);
+          
+          img.style.width = `${newWidth}px`;
+          img.style.height = `${newHeight}px`;
+          
+          // 重新计算margin，保持居中
+          img.style.margin = `0 auto 16px`;
+        }
+      }
+    }
+
+    // 优化所有头像（优化性能版本）
+    function optimizeAvatars() {
+      const avatarImages = document.querySelectorAll('.nav-avatar img');
+      
+      // 使用requestIdleCallback在浏览器空闲时执行
+      if ('requestIdleCallback' in window) {
+        let index = 0;
+        const processNext = () => {
+          // 每次处理5个头像，避免长时间阻塞主线程
+          const batchSize = 5;
+          const end = Math.min(index + batchSize, avatarImages.length);
+          
+          for (; index < end; index++) {
+            const img = avatarImages[index];
+            // 确保图像已加载完成
+            if (img.complete) {
+              optimizeAvatarSize(img);
+              
+              // 设置头像背景为图片平均色
+              const avgColor = getAverageColor(img);
+              const container = img.parentElement;
+              if (container) {
+                container.style.backgroundColor = `rgb(${avgColor.r}, ${avgColor.g}, ${avgColor.b})`;
+              }
+            } else {
+              img.onload = () => {
+                optimizeAvatarSize(img);
+                
+                // 设置头像背景为图片平均色
+                const avgColor = getAverageColor(img);
+                const container = img.parentElement;
+                if (container) {
+                  container.style.backgroundColor = `rgb(${avgColor.r}, ${avgColor.g}, ${avgColor.b})`;
+                }
+              };
+            }
+          }
+          
+          // 如果还有头像需要处理，继续在下一个空闲时间处理
+          if (index < avatarImages.length) {
+            requestIdleCallback(processNext);
+          }
+        };
+        
+        requestIdleCallback(processNext);
+      } else {
+        // 兼容性处理：如果浏览器不支持requestIdleCallback，使用setTimeout
+        avatarImages.forEach((img, index) => {
+          setTimeout(() => {
+            if (img.complete) {
+              optimizeAvatarSize(img);
+              
+              // 设置头像背景为图片平均色
+              const avgColor = getAverageColor(img);
+              const container = img.parentElement;
+              if (container) {
+                container.style.backgroundColor = `rgb(${avgColor.r}, ${avgColor.g}, ${avgColor.b})`;
+              }
+            } else {
+              img.onload = () => {
+                optimizeAvatarSize(img);
+                
+                // 设置头像背景为图片平均色
+                const avgColor = getAverageColor(img);
+                const container = img.parentElement;
+                if (container) {
+                  container.style.backgroundColor = `rgb(${avgColor.r}, ${avgColor.g}, ${avgColor.b})`;
+                }
+              };
+            }
+          }, index * 10); // 错开执行，减少性能压力
+        });
+      }
+    }
+
     // 页面加载完成后生成内容
     document.addEventListener('DOMContentLoaded', () => {
       renderAllSections();
@@ -3485,12 +3824,79 @@
       if (!dailyImageBg) return;
       
       // 获取当前选择的背景API和关键词
-      const backgroundApi = localStorage.getItem('backgroundApi') || 'bing';
-      const wpKeyword = localStorage.getItem('wpKeyword') || '';
-      
-      // 添加加载过渡效果
-      dailyImageBg.style.opacity = '0';
-      dailyImageBg.style.transition = 'opacity 1s ease-in-out';
+  const backgroundApi = localStorage.getItem('backgroundApi') || 'bing';
+  const wpKeyword = localStorage.getItem('wpKeyword') || '';
+  const backgroundMode = localStorage.getItem('backgroundMode') || 'window';
+  
+  // 添加加载过渡效果
+  dailyImageBg.style.opacity = '0';
+  dailyImageBg.style.transition = 'opacity 1s ease-in-out';
+  
+  // 根据背景模式应用不同的样式
+  if (backgroundMode === 'fullscreen') {
+    // 全屏背景模式
+    dailyImageBg.style.position = 'fixed';
+    dailyImageBg.style.top = '0';
+    dailyImageBg.style.left = '0';
+    dailyImageBg.style.width = '100vw';
+    dailyImageBg.style.height = '100vh';
+    dailyImageBg.style.zIndex = '-1';
+    dailyImageBg.style.borderRadius = '0';
+    dailyImageBg.style.backgroundSize = 'cover';
+    dailyImageBg.style.backgroundPosition = 'center';
+    dailyImageBg.style.backgroundRepeat = 'no-repeat';
+    
+    // 移除容器的背景渐变
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer) {
+      appContainer.style.background = 'transparent';
+      appContainer.style.backgroundImage = 'none';
+    }
+    
+    // 确保页脚文字可见
+    const footer = document.querySelector('.footer');
+    if (footer) {
+      footer.style.color = 'var(--md-sys-color-on-background)';
+      footer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+      footer.style.borderRadius = '8px';
+      footer.style.margin = '60px auto 20px';
+      footer.style.padding = '16px 20px';
+      footer.style.maxWidth = '800px';
+      footer.style.position = 'relative';
+      footer.style.zIndex = '10';
+    }
+  } else {
+    // 窗口背景模式（默认）
+    dailyImageBg.style.position = 'absolute';
+    dailyImageBg.style.top = '0';
+    dailyImageBg.style.left = '0';
+    dailyImageBg.style.width = '100%';
+    dailyImageBg.style.height = '100%';
+    dailyImageBg.style.zIndex = '0';
+    dailyImageBg.style.borderRadius = 'var(--md-sys-shape-corner-extra-large)';
+    dailyImageBg.style.backgroundSize = 'cover';
+    dailyImageBg.style.backgroundPosition = 'center';
+    dailyImageBg.style.backgroundRepeat = 'no-repeat';
+    
+    // 恢复容器的背景渐变
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer) {
+      appContainer.style.background = 'linear-gradient(135deg, var(--md-sys-color-background) 0%, #2C2B30 100%)';
+    }
+    
+    // 恢复页脚默认样式
+    const footer = document.querySelector('.footer');
+    if (footer) {
+      footer.style.color = 'var(--md-sys-color-on-surface-variant)';
+      footer.style.backgroundColor = 'transparent';
+      footer.style.borderRadius = '';
+      footer.style.margin = '60px 0 20px';
+      footer.style.padding = '20px';
+      footer.style.maxWidth = '100%';
+      footer.style.position = '';
+      footer.style.zIndex = '';
+    }
+  }
       
       if (backgroundApi === 'bing') {
         // 使用必应每日壁纸API
@@ -3631,6 +4037,17 @@
       
       // 主题模式选择功能
       const modeOptions = document.querySelectorAll('.mode-option');
+      
+      // 初始化主题模式选择状态
+      const savedThemeMode = localStorage.getItem('theme') || 'dark';
+      modeOptions.forEach(option => {
+        if (option.dataset.mode === savedThemeMode) {
+          option.style.backgroundColor = 'var(--md-sys-color-primary)';
+          option.style.color = 'var(--md-sys-color-on-primary)';
+          option.style.borderColor = 'var(--md-sys-color-primary)';
+        }
+      });
+      
       modeOptions.forEach(option => {
         option.addEventListener('click', () => {
           const mode = option.dataset.mode;
@@ -3722,10 +4139,48 @@
         });
       }
       
+      // 背景模式选择功能
+      const backgroundModeOptions = document.querySelectorAll('.background-mode-option');
+      
+      // 初始化背景模式选择状态
+      const savedBackgroundMode = localStorage.getItem('backgroundMode') || 'window';
+      backgroundModeOptions.forEach(option => {
+        if (option.dataset.mode === savedBackgroundMode) {
+          option.style.backgroundColor = 'var(--md-sys-color-primary)';
+          option.style.color = 'var(--md-sys-color-on-primary)';
+          option.style.borderColor = 'var(--md-sys-color-primary)';
+        }
+      });
+      
+      // 背景模式选择事件监听器
+      backgroundModeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+          const mode = option.dataset.mode;
+          
+          // 更新选中状态
+          backgroundModeOptions.forEach(opt => {
+            opt.style.backgroundColor = 'var(--md-sys-color-surface-variant)';
+            opt.style.color = 'var(--md-sys-color-on-surface-variant)';
+            opt.style.borderColor = 'var(--md-sys-color-outline)';
+          });
+          option.style.backgroundColor = 'var(--md-sys-color-primary)';
+          option.style.color = 'var(--md-sys-color-on-primary)';
+          option.style.borderColor = 'var(--md-sys-color-primary)';
+          
+          // 保存背景模式设置
+          localStorage.setItem('backgroundMode', mode);
+          
+          // 应用背景模式
+          loadDailyImage();
+        });
+      });
+      
       // 应用背景按钮事件监听器
       if (applyBackgroundButton) {
         applyBackgroundButton.addEventListener('click', () => {
           loadDailyImage();
+          // 点击确定后关闭卡片
+          closePaletteWindow();
         });
       }
     }
